@@ -24,7 +24,10 @@ async def get_prices_sequential(shops: list[str]) -> list[int]:
 
     Подсказка: обычный цикл for и await fetch_price(...) внутри.
     """
-    raise NotImplementedError
+    prices = []
+    for shop in shops:
+        prices.append(await fetch_price(shop))
+    return prices
 
 
 # ---------- Задача 1.2 ----------
@@ -35,7 +38,7 @@ async def get_prices_concurrent(shops: list[str]) -> list[int]:
 
     Подсказка: asyncio.gather.
     """
-    raise NotImplementedError
+    return await asyncio.gather(*(fetch_price(shop) for shop in shops))
 
 
 # ---------- Задача 1.3 ----------
@@ -46,7 +49,10 @@ async def get_price_or_none(shop: str, timeout: float = 1.0) -> int | None:
 
     Подсказка: asyncio.wait_for и except TimeoutError.
     """
-    raise NotImplementedError
+    try:
+        return await asyncio.wait_for(fetch_price(shop), timeout=timeout)
+    except TimeoutError:
+        return None
 
 
 async def get_prices_with_timeout(shops: list[str], timeout: float = 1.0) -> list[int | None]:
@@ -54,7 +60,7 @@ async def get_prices_with_timeout(shops: list[str], timeout: float = 1.0) -> lis
 
     Подсказка: gather по get_price_or_none.
     """
-    raise NotImplementedError
+    return await asyncio.gather(*(get_price_or_none(shop, timeout) for shop in shops))
 
 
 # ---------- Задача 1.4 (дополнительная) ----------
@@ -65,7 +71,16 @@ async def get_prices_limited(shops: list[str], limit: int = 3) -> list[int]:
 
     Подсказка: asyncio.Semaphore(limit) и async with внутри вспомогательной функции.
     """
-    raise NotImplementedError
+    if limit < 1:
+        raise ValueError("limit должен быть >= 1")
+
+    semaphore = asyncio.Semaphore(limit)
+
+    async def fetch_with_limit(shop: str) -> int:
+        async with semaphore:
+            return await fetch_price(shop)
+
+    return await asyncio.gather(*(fetch_with_limit(shop) for shop in shops))
 
 
 if __name__ == "__main__":

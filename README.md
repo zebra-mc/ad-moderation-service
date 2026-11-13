@@ -4,7 +4,7 @@ HTTP API на FastAPI, которое по данным объявления о�
 
 ## Технологии
 
-- Python 3.11+
+- Python 3.12+
 - FastAPI
 - Pydantic
 - pytest
@@ -83,4 +83,5 @@ services/moderation.py      правила модерации
 repositories/moderation.py  параметры правил (хранятся в памяти)
 schemas/advertisement.py    Pydantic-модель объявления
 tests/                      тесты
+hw2/                        ДЗ 2: asyncio и потоки, тесты запускаются из папки каждой задачи
 ```
