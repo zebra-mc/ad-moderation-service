@@ -133,3 +133,12 @@ def test_predict_service_error(client, valid_ad, monkeypatch):
     assert response.status_code == 500
     assert response.json() == {"detail": "Internal Server Error"}
     assert "secret internal details" not in response.text
+
+
+def test_predict_openapi_status_codes(client):
+    response = client.get("/openapi.json")
+
+    assert response.status_code == 200
+
+    responses = response.json()["paths"]["/predict"]["post"]["responses"]
+    assert set(responses) == {"200", "400", "500"}

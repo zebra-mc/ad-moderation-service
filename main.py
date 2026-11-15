@@ -33,3 +33,16 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+# FastAPI documents 422 by default, but validation errors return 400.
+_default_openapi = app.openapi
+
+
+def custom_openapi():
+    schema = _default_openapi()
+    schema["paths"]["/predict"]["post"]["responses"].pop("422", None)
+    return schema
+
+
+app.openapi = custom_openapi
